@@ -3,24 +3,18 @@ package com.github.zerotobeone.apollo;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.date.TimeInterval;
-import cn.hutool.core.io.file.FileReader;
 import cn.hutool.core.lang.Console;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
-import com.ctrip.framework.apollo.openapi.dto.NamespaceReleaseDTO;
-import com.ctrip.framework.apollo.openapi.dto.OpenItemDTO;
-import com.ctrip.framework.apollo.openapi.dto.OpenNamespaceDTO;
 import com.github.zerotobeone.apollo.client.ApolloClient;
-import com.github.zerotobeone.apollo.conf.ApolloConf;
 import com.github.zerotobeone.apollo.conf.FileConf;
 import com.github.zerotobeone.apollo.util.ConsoleUtil;
+import com.github.zerotobeone.apollo.util.FileUtil;
 import com.github.zerotobeone.apollo.util.IgnoreUtil;
 import com.google.common.base.Strings;
 
 import java.io.File;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -34,7 +28,7 @@ import java.util.concurrent.Executors;
 public class PublishToApollo {
     private static final Log log = LogFactory.get();
 
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) {
         ConsoleUtil.logApplicationTitle();
         TimeInterval timer = DateUtil.timer();
         String appId;
@@ -109,42 +103,46 @@ public class PublishToApollo {
         int taskCount = countNum(deployEnv, path);
         CountDownLatch countDownLatch = new CountDownLatch(taskCount);
         File file = new File(path);
-        File[] appfss = file.listFiles();
-        for(File appfs : appfss){
-            String appid = appfs.getName().split("&")[0];
-            if (IgnoreUtil.isIgnored(appid)) {
+        File[] appFiles = file.listFiles();
+        if (appFiles == null) {
+            log.error("【error folder】{}", path);
+            return;
+        }
+        for(File appFile : appFiles){
+            String appId = appFile.getName().split("&")[0];
+            if (IgnoreUtil.isIgnored(appId)) {
                 continue;
             }
-            File[] envfss = appfs.listFiles();
-            if (envfss == null) {
-                log.error("【error folder】{}", appid);
+            File[] envFiles = appFile.listFiles();
+            if (envFiles == null) {
+                log.error("【error folder】{}", appId);
                 continue;
             }
-            for(File envfs : envfss){
-                String env = envfs.getName();
+            for(File envFile : envFiles){
+                String env = envFile.getName();
 
-                File[] clusterfss = envfs.listFiles();
-                if (clusterfss == null) {
-                    log.error("【error folder】{}", appid);
+                File[] clusterFiles = envFile.listFiles();
+                if (clusterFiles == null) {
+                    log.error("【error folder】{}", appId);
                     continue;
                 }
 
-                for(File clusterfs : clusterfss){
-                    String cluster = clusterfs.getName();
-                    File[] namespacefss = clusterfs.listFiles();
-                    if (namespacefss == null){
-                        log.error("【error folder】{}", appid);
+                for(File clusterFile : clusterFiles){
+                    String cluster = clusterFile.getName();
+                    File[] namespaceFiles = clusterFile.listFiles();
+                    if (namespaceFiles == null){
+                        log.error("【error folder】{}", appId);
                         continue;
                     }
 
-                    for (File namespacefs : namespacefss) {
+                    for (File namespacefs : namespaceFiles) {
                         String namespace = namespacefs.getName().replace(".properties", "");
 
                         //deploy
                         if(deployEnv.equals(env)){
                             executors.submit(() -> {
                                 try {
-                                    fastDeploy(appid, env, cluster, namespace, namespacefs);
+                                    fastDeploy(appId, env, cluster, namespace, namespacefs);
                                 } catch (Exception e) {
                                     log.error(e);
                                 }finally {
@@ -165,48 +163,40 @@ public class PublishToApollo {
         executors.shutdown();
     }
 
-    private static Map<String, String> checkAndGetNamespace(String appid, String env, String clusterName, String namespaceName){
-        try{
-            OpenNamespaceDTO openNamespaceDTO = ApolloClient.getClient().getNamespace(appid, env, clusterName, namespaceName);
-            Map<String, String> properties = new ConcurrentHashMap<>();
-            openNamespaceDTO.getItems().forEach(item -> properties.put(item.getKey(), item.getValue()));
-            return properties;
-        } catch (Exception e){
-            log.error("【namespace check error】{}/{}/{}/{}",appid, env, clusterName, namespaceName);
-            throw e;
-        }
-    }
-
     private static int countNum(String deployEnv, String path){
         int taskCount = 0;
 
         File file = new File(path);
-        File[] appfss = file.listFiles();
-        for(File appfs : appfss){
-            String appid = appfs.getName().split("&")[0];
-            if (IgnoreUtil.isIgnored(appid)) {
+        File[] appFiles = file.listFiles();
+        if (appFiles == null) {
+            log.error("【error folder】{}", path);
+            return 0;
+        }
+        for(File appFile : appFiles){
+            String appId = appFile.getName().split("&")[0];
+            if (IgnoreUtil.isIgnored(appId)) {
                 continue;
             }
-            File[] envfss = appfs.listFiles();
-            if (envfss == null) {
+            File[] envFiles = appFile.listFiles();
+            if (envFiles == null) {
                 continue;
             }
-            for(File envfs : envfss){
-                String env = envfs.getName();
+            for(File envFile : envFiles){
+                String env = envFile.getName();
 
-                File[] clusterfss = envfs.listFiles();
-                if (clusterfss == null) {
+                File[] clusterFiles = envFile.listFiles();
+                if (clusterFiles == null) {
                     continue;
                 }
 
-                for(File clusterfs : clusterfss){
-                    File[] namespacefss = clusterfs.listFiles();
-                    if (namespacefss == null){
+                for(File clusterFile : clusterFiles){
+                    File[] namespaceFiles = clusterFile.listFiles();
+                    if (namespaceFiles == null){
                         continue;
                     }
 
                     if(deployEnv.equals(env)){
-                        taskCount += namespacefss.length;
+                        taskCount += namespaceFiles.length;
                     }
                 }
             }
@@ -214,30 +204,10 @@ public class PublishToApollo {
         return taskCount;
     }
 
-    private static void fastDeploy(String appid, String env, String clusterName, String namespaceName, File namespaceFile) {
-        Map<String, String> oldProperties = checkAndGetNamespace(appid, env, clusterName, namespaceName);
+    private static void fastDeploy(String appId, String env, String clusterName, String namespaceName, File namespaceFile) {
+        Map<String, String> oldProperties = ApolloClient.checkAndGetNamespaceProperties(appId, env, clusterName, namespaceName);
         //read the file
-        Map<String, String> newProperties = new ConcurrentHashMap<>();
-        FileReader fileReader = new FileReader(namespaceFile.getAbsolutePath(),  "UTF-8");
-        List<String> result = fileReader.readLines();
-        for (String line : result) {
-            //jump over comment line
-            if(line.trim().startsWith("#")) {
-                continue;
-            }
-            //jump over empty line
-            if("".equals(line.trim())) {
-                continue;
-            }
-            //get the key and value of one line
-            int splitIndex = line.indexOf("=");
-            String key = line.substring(0 , splitIndex).trim();
-            String value = line.substring(splitIndex + 1).trim().replace("\\n","\n");
-
-            if(!Strings.isNullOrEmpty(key)){
-               newProperties.put(key, value);
-            }
-        }
+        Map<String, String> newProperties = FileUtil.readPropertiesFile(namespaceFile.getAbsolutePath());
 
         //compare old value
         newProperties.keySet().forEach(key ->{
@@ -253,46 +223,22 @@ public class PublishToApollo {
         newProperties.keySet().forEach(key ->{
             if(!Strings.isNullOrEmpty(key)){
                 String value = newProperties.get(key);
-                OpenItemDTO openItemDTO = new OpenItemDTO();
-                openItemDTO.setKey(key);
-                openItemDTO.setValue(value);
-                openItemDTO.setDataChangeCreatedBy(ApolloConf.releaseBy);
-                try{
-                    ApolloClient.getClient().createOrUpdateItem(appid, env, clusterName, namespaceName, openItemDTO);
-                    log.debug("【update】{}/{}/{}/ {} : {}",appid, env, namespaceName, key, value);
-                }catch (Exception e){
-                    log.error("【update exception】{}/{}/{}/ {} : {}",appid, env, namespaceName, key, value);
-                    log.error(e, "【need to check permission】{}", appid);
-                }
+                ApolloClient.createOrUpdate(appId, env, clusterName, namespaceName, key, value);
             }
         });
 
         //delete key
         oldProperties.keySet().forEach(key ->{
             if(key != null && !"".equals(key)){
-                try{
-                    ApolloClient.getClient().removeItem(appid, env, clusterName, namespaceName, key, "apollo");
-                    log.debug("【delete】{}/{}/{}/ {}",appid, env, namespaceName, key);
-                }catch (Exception e){
-                    log.error("【delete exception】{}/{}/{}/ {}",appid, env, namespaceName, key);
-                }
+                ApolloClient.removeItem(appId, env, clusterName, namespaceName, key);
             }
         });
 
         boolean needToPublished = CollectionUtil.isNotEmpty(newProperties) || CollectionUtil.isNotEmpty(oldProperties);
         if(needToPublished){
-            NamespaceReleaseDTO namespaceReleaseDTO  = new NamespaceReleaseDTO();
-            namespaceReleaseDTO.setReleasedBy(ApolloConf.releaseBy);
-            namespaceReleaseDTO.setReleaseComment(ApolloConf.releaseComment);
-            namespaceReleaseDTO.setReleaseTitle(ApolloConf.releaseTitle);
-            try {
-                ApolloClient.getClient().publishNamespace(appid, env, clusterName, namespaceName, namespaceReleaseDTO);
-            }catch (Exception e){
-                log.error(e, "【publish error】{}/{}/{}", appid, env, namespaceName);
-            }
-            log.info("【publish】{}/{}/{}", appid, env, namespaceName);
+            ApolloClient.publish(appId, env, clusterName, namespaceName);
         }else {
-            log.info("【publish no need】{}/{}/{}", appid, env, namespaceName);
+            log.info("【publish no need】{}/{}/{}", appId, env, namespaceName);
         }
 
     }
