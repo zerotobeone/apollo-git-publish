@@ -1,4 +1,4 @@
-package com.github.zerotobeone.apollo;
+package com.github.zerotobeone.apollo.client;
 
 import com.ctrip.framework.apollo.openapi.client.ApolloOpenApiClient;
 import com.github.zerotobeone.apollo.conf.ApolloConf;

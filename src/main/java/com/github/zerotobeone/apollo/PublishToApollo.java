@@ -10,6 +10,7 @@ import cn.hutool.log.LogFactory;
 import com.ctrip.framework.apollo.openapi.dto.NamespaceReleaseDTO;
 import com.ctrip.framework.apollo.openapi.dto.OpenItemDTO;
 import com.ctrip.framework.apollo.openapi.dto.OpenNamespaceDTO;
+import com.github.zerotobeone.apollo.client.ApolloClient;
 import com.github.zerotobeone.apollo.conf.ApolloConf;
 import com.github.zerotobeone.apollo.conf.FileConf;
 import com.github.zerotobeone.apollo.util.ConsoleUtil;
