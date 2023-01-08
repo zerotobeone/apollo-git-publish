@@ -1,0 +1,18 @@
+{
+  "resources":{
+  "includes":[
+    {
+      "pattern":"\\QMETA-INF/services/cn.hutool.log.LogFactory\\E"
+    }, 
+    {
+      "pattern":"\\Qlog4j.properties\\E"
+    }, 
+    {
+      "pattern":"\\Qmozilla/public-suffix-list.txt\\E"
+    }, 
+    {
+      "pattern":"\\Qorg/apache/http/client/version.properties\\E"
+    }
+  ]},
+  "bundles":[]
+}

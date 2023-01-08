@@ -10,6 +10,6 @@ import java.util.Arrays;
  */
 public class IgnoreUtil {
     public static boolean isIgnored(String s) {
-        return Arrays.asList(".git", ".idea", ".fleet", "README.md", "src", ".gitignore", "target", "pom.xml").contains(s);
+        return Arrays.asList(".DS_Store",".git", ".idea", ".fleet", "README.md", "src", ".gitignore", "target", "pom.xml").contains(s);
     }
 }

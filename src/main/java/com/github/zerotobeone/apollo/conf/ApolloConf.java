@@ -21,7 +21,7 @@ public class ApolloConf {
     public static String releaseTitle;
 
     static {
-        Props props = new Props("apollo.properties");
+        Props props = new Props(System.getProperty("user.home") + "/.apollo-git-publish-cnf");
         url = props.getStr("apollo.url");
         token = props.getStr("apollo.token");
         releaseBy = props.getStr("apollo.releaseBy", "apollo-git");

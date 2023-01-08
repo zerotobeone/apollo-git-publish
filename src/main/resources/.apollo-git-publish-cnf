@@ -1,0 +1,7 @@
+apollo.url=http://localhost:8070/
+apollo.token=0e613b93607739c2733eb1b20dff93611f701b8f
+apollo.releaseBy=apollo
+apollo.releaseComment=default comment by apollo-git-publish
+apollo.releaseTitle=default title by apollo-git-publish
+
+file.url=~/zerotobeone/apollo-git-publish

@@ -12,9 +12,11 @@ public class FileConf {
     public static String fileRootUrl;
 
     static {
-        Props props = new Props("apollo.properties");
-        fileRootUrl = props.getStr("file.url", FileConf.class.getClassLoader().getResource("").getPath()
-                .replace("/target/classes", ""));
+        Props props = new Props(System.getProperty("user.home") + "/.apollo-git-publish-cnf");
+        fileRootUrl = props.getStr("file.url");
+        if (fileRootUrl.trim().startsWith("~")){
+            fileRootUrl = System.getProperty("user.home") +  fileRootUrl.substring(1);
+        }
         props.clear();
     }
 }
