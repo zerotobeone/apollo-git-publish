@@ -14,7 +14,7 @@ public class FileConf {
     static {
         Props props = new Props("apollo.properties");
         fileRootUrl = props.getStr("file.url", FileConf.class.getClassLoader().getResource("").getPath()
-                .replace("/target/classes", ""));
+                .replace("/target/classes", "").replace("/build/classes/java/main/", ""));
         props.clear();
     }
 }
