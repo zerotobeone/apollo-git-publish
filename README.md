@@ -1,7 +1,7 @@
 <img src="https://cdn.jsdelivr.net/gh/apolloconfig/apollo@master/doc/images/logo/logo-simple.png" alt="apollo-logo" width="40%">
 
 # apollo-git-publish
-一个用于将维护在git项目中的apollo配置文件一件发布到apollo配置中心的工具。
+一个用于将维护在git项目中的apollo配置文件一键发布到apollo配置中心的工具。
 
 （用于apollo配置在开发阶段用git项目管理，发版本时需要全量配置更新到apollo中验证。由于apollo的api只提供单个配置的更新删除功能，故采用多线程，检查一个namesapce下面的所有已经发布的配置，对比本地文件中配置的配置，计算需要删除、新增及更新的配置，最小化调用api去更新并发布apollo中的配置）
 
