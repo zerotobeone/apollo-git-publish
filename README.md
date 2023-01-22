@@ -25,7 +25,7 @@ apollo.releaseTitle=default title by apollo-git-publish
 3. 直接运行PublishToApollo.java中的Main方法即可，按提示操作即可。
 
 ## native应用（graal vm）
-可以借助graal vm将项目编译成可执行文件，直接在命令行允许即可。需要自己安装graal vm，借助maven的native-image-maven-plugin插件打包可执行文件。
+切换到graalvm分支，可以借助graal vm将项目编译成可执行文件，直接在命令行允许即可。需要自己安装graal vm，借助maven的native-image-maven-plugin插件打包可执行文件。
 
 使用native应用，需要配置文件.apollo-git-publish-cnf到用户home目录(~/.apollo-git-publish-cnf)，配置文件参考如下：
 ```
