@@ -29,22 +29,22 @@ public class PublishToApollo {
         String appId;
         String deployEnv = ConsoleUtil.getInput("please input deploy env: [DEV]", "DEV");
         String deployType = ConsoleUtil.getInput("please input deploy type (1.all, 2.single app, 3.single namespace): [1]", "1");
-        switch (deployType){
-            case "1":
+        switch (deployType) {
+            case "1" -> {
                 // all
                 String threadNum = ConsoleUtil.getInput("please input thread num: [20]", "20");
                 log.info("【start】");
                 timer.start("deploy");
                 deployAll(deployEnv, Integer.parseInt(threadNum));
-                break;
-            case "2":
+            }
+            case "2" -> {
                 // single app
                 appId = ConsoleUtil.getInput("please input appId:");
                 log.info("【start】");
                 timer.start("deploy");
                 deploySingleApp(deployEnv, appId);
-                break;
-            case "3":
+            }
+            case "3" -> {
                 // single namespace
                 appId = ConsoleUtil.getInput("please input appId:");
                 String cluster = ConsoleUtil.getInput("please input cluster: [default]", "default");
@@ -52,10 +52,8 @@ public class PublishToApollo {
                 log.info("【start】");
                 timer.start("deploy");
                 deploySingleAppNameSpace(deployEnv, appId, namespace, cluster);
-                break;
-            default:
-                Console.log("deploy input error");
-                break;
+            }
+            default -> Console.log("deploy input error");
         }
         log.info("【done】");
         Console.log("deploy took {} ms", timer.intervalMs("deploy"));

@@ -3,6 +3,7 @@ package com.github.zerotobeone.apollo.util;
 import cn.hutool.core.io.file.FileReader;
 import com.google.common.base.Strings;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,9 +17,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class FileUtil {
     
     public static Map<String, String> readPropertiesFile(String fileUrl){
-        Map<String, String> properties = new ConcurrentHashMap<>();
-        FileReader fileReader = new FileReader(fileUrl,  "UTF-8");
+        FileReader fileReader = new FileReader(fileUrl, StandardCharsets.UTF_8);
         List<String> result = fileReader.readLines();
+        Map<String, String> properties = new ConcurrentHashMap<>(result.size());
         for (String line : result) {
             //jump over comment line
             if(line.trim().startsWith("#")) {

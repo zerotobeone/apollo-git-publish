@@ -7,9 +7,9 @@ import com.ctrip.framework.apollo.openapi.dto.NamespaceReleaseDTO;
 import com.ctrip.framework.apollo.openapi.dto.OpenItemDTO;
 import com.ctrip.framework.apollo.openapi.dto.OpenNamespaceDTO;
 import com.github.zerotobeone.apollo.conf.ApolloConf;
+import com.google.common.collect.Maps;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * ApolloClient
@@ -70,9 +70,9 @@ public class ApolloClient {
     }
 
     public static Map<String, String> checkAndGetNamespaceProperties(String appId, String env, String clusterName, String namespaceName){
-        try{
+        try {
             OpenNamespaceDTO openNamespaceDTO = ApolloClient.getClient().getNamespace(appId, env, clusterName, namespaceName);
-            Map<String, String> properties = new ConcurrentHashMap<>();
+            Map<String, String> properties = Maps.newHashMapWithExpectedSize(openNamespaceDTO.getItems().size());
             openNamespaceDTO.getItems().forEach(item -> properties.put(item.getKey(), item.getValue()));
             return properties;
         } catch (Exception e){
