@@ -5,6 +5,8 @@
 
 （用于apollo配置在开发阶段用git项目管理，发版本时需要全量配置更新到apollo中验证。由于apollo的api只提供单个配置的更新删除功能，故采用多线程，检查一个namesapce下面的所有已经发布的配置，对比本地文件中配置的配置，计算需要删除、新增及更新的配置，最小化调用api去更新并发布apollo中的配置）
 
+<img src="https://raw.githubusercontent.com/zerotobeone/apollo-git-publish/main/sample.png" alt="sample">
+
 ## 快速使用方式
 1. 使用main分支，将项目配置文件直接写到项目中，目录格式参考项目中SampleApp文件夹。
 文件夹命名规则如下：
