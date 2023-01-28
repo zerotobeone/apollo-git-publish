@@ -40,6 +40,9 @@ public class PublishTask {
             return;
         }
         for(File appFile : appFiles){
+            if (!appFile.isDirectory()){
+                continue;
+            }
             String appId = appFile.getName().split("&")[0];
             if (IgnoreUtil.isIgnored(appId)) {
                 continue;
